@@ -149,6 +149,7 @@ In addition to commands to read/write data from the card, most card readers also
 | Beep | FF | 00 | 40 | 00 | 04 01 00 03 03 |
 
 #
+
 ##### Responses:
 Like commands, responses (also called ADPUs) have a standard format:
 
@@ -169,8 +170,9 @@ The two response codes indicate the success or error of the response. Typically 
 
 The typical command-response loop for ADPUs involves picking the command from a table, specifying the data and/or length, then checking the response for a `90 00` success.
 
+#
 
-###### Answer to Reset (ATR):
+##### Answer to Reset (ATR):
 One other commaniality worth mentioning is the very first response that a reader gets when powering a smartcard. Since smartcards don't hold state when unpowered, every power activation is a form of reset, hence the term. The ATR encodes information about the smartcard, specifying everything from the card vendor, to physical characteristics such as transmission rates and electrial timings. Most of this information is used by the firmware on a card reader, but smartcard programmers typically use the ATR to determine the type of the card the reader. A detailed breakdown of the ATR can be found at https://en.wikipedia.org/wiki/Answer_to_reset.
 
 For our purposes, we are really interested in the *historical byts* section of the ATR. This area is reserved for card manfuacturers to include whatever information they believe is necessary for thier card. Typically it includes the name of the vendor and card, as well as the amount of writable memory. When programming a smartcard application, the first part of the program almost always involes reading the ATR to detect the type of card and then either ignore it or continue.
@@ -212,6 +214,7 @@ Here is a table showing the relevant portions for various NXP NTAG chips:
 | MF0UL2101  | 03 | 01    | 01 00 | 0E |
 | MF0ULH2101 | 03 | 02    | 01 00 | 0E |
 
+#
 
 Development Envrionments:
 -------------------------
@@ -220,8 +223,36 @@ Desktop operating systems use the PC/SC specifications for communicating with a 
 These two pieces of software enable higher-leve smartcard libraries in various langauges to be built. There are smartcard libraries avaialbe for almost all of the major programming langauges, including C/C++, C#, Java, Python, Node, and others. This guide will focus on two of the higher-level langauges: Java and Python
 
 
+#
+### Windows:
+On Windows, no setup is needed before the PC/SC libraries and reader can be used. When you connect the reader, Window should recognize it as a *Microsoft Usbccid Smartcard Reader* or something similar. Many readers, including the ACR122u are equipped with an LED light. Once the reader has successfully communicated with the computer, the light(s) will turn on and indicate that no card is present. The status light will only engagne of communication occurs, so the lack of any lights on the ACR122u means that that there is an issue either with the driver or with the PC/SC libary.
 
-### Java
+#
+### Linux (Ubuntu)
+There are many versions of Linux. Some have the PC/SC Lite and related packages already installed, others do not. The following instructions should work for any Debian based system, but they have only been tested on Ubuntu 16.04, Ubuntu 18.04, and Mint.
+
+Connect the reader via USB, and look for the presence of a status light indicating that the reader can communicate with the computer (see Windows section above). If the reader lights up, place an NFC tag on it and check if it beeps or changes color. If so, then you have the necessary libraries installed. If not, follow the steps below.
+
+Install the following packages using `apt install <paclage>`:
+
+* libusb-dev (USB development)
+* pcscd (PC/SC daemon)
+* libpcsclite1 (PC/SC lite library)
+* libpcsclite-dev (PC/SC lite development library)
+
+To test if Linux has reconized your reader, run `lsusb` and look for the name of your reader.
+
+To test if the PC/SC lite interface is working run `pcsc_scan` and look in the output for the pressence of the reader and/or card.
+
+On some systems you may have to manually start the PC/SC deamon with `sudo service pcscd start`, on others, the service will automatically be started when the reader is accessed.
+
+Other libraries that may be necessary if the above doesn't work(don't install unless you need to):
+* libusb++
+* libccid
+
+
+
+## Java
 
 Java has had built-in, first party support for smartcard interaction since Java 1.6. Compared with some of the other libaries, Java's javax.smartcardio is fairly basic, with only a few commonly used classes, and a dozen or so methods. This makes the library easy to learn and use, but at the expense of longer and more verbose applications. There are various third-party libraries that extend smardcardio to specific smartcard implementations.
 
@@ -470,11 +501,222 @@ To run the examples, use the following command while in the *root* directory:
 
 
 #### Linux
-The example source was generated in a Windows envrionment without issue. However, when running the application on Linux (specifically Ubuntu), the application was not able to discover the reader. The issue is that the default location (path) that Java searches for the smartcard reader is incorrect. The issue can be resolved by specifying the correct location when running the program
+The example source was generated in a Windows envrionment without issue. However, when running the application on Linux (specifically Ubuntu), the application was not able to discover the reader. The issue is that on some Java versions, the default location (path) that Java searches for the pc/sc library is incorrect. The issue can be resolved by specifying the correct location.
+
+**Locate the correct path**:
+```
+find /usr/ -name libpcsclite.so.1
+```
+
+**Option 1: &nbsp; Specify the path when you run the Java program**
+```
+java --module-path bin -m examples/smartcard.Example1  -Dsun.security.smartcardio.library=/path/to/libpcsclite.so.1
+```
+
+**Option 2: &nbsp; Specify the path as an envriomental variable**
+```
+export JAVA_OPTS="-Dsun.security.smartcardio.library=/path/to/libpcsclite.so.1
+```
+
+**Option 3: &nbsp; Specify the path in Code**
+(obtained in prt from https://stackoverflow.com/questions/12376257/accessing-javax-smartcardio-from-linux-64-bits)
+```java
+public void setPcscLocation() {
+   try {
+      String command[] = {"find", "/usr", "-name", "libpcsclite.so.1"};
+      Process p = Runtime.getRuntime().exec(comm);
+
+      BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+      while ((line = reader.readLine()) != null && !line.equals("")) {
+          if (line.contains("libpcsclite.so.1")) {
+          System.setProperty("sun.security.smartcardio.library",line);
+              break;
+          }
+
+      }
+      p.waitFor();
+
+   } catch (Exception e) {
+      e.printStackTrace();
+   }
+}
+```
+
+
+#
+## Python
+
+There are several Python libraries for interacting with smartcard and readers. We will be using *pyscard*, which contains both a higher level API and a low-level API for working directly with the C compiled pc/sc interface. Our focus will be on the higher-level API.
+
+As a library, *pyscard* offers a higher-level interface than Java's *smartcardio*, with things like event handeling, signal listeners, and extensive documentation. The downside to this is that it takes a little more effort to get all of the library dependencies installed. In particular, psycard requires a non-Python development tool called [SWIG](http://www.swig.org/) which helps connect Python with the C/C++ pc/sc binaries. The pyscard library also requires that a native C/C++ compiler be installed on the system. As such, simply doing a `pip install psycard` wont't cut it.
 
 
 
+### Installiation on Windows
 
+#### Installing Pytonn and Pip
+First, make sure that you have both Python 3 and Pip installed. You can test this by running `python --version` and `pip --version` from the command line. This guide was made using Python 3.6 and Pip 10, but any 3.x version should work. If you don't have Python/Pip installed, then the recommended install method is to use the Windows package manager, [Chocolatey](https://chocolatey.org/).
+
+You can install Chocolatey by running the following command from an *administrative command prompt*. Or you can download a standard installer from the website.
+```
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+```
+
+Once Chocolately is installed, run the following commands to install Python and Pip
+```
+choco install python3
+choco install pip
+```
+
+
+#
+#### Installing psycard and its dependencies
+
+The first and easiest option is to use one of the pre-build binary installers available from https://ci.appveyor.com/project/LudovicRousseau/pyscard. From the site, select the job that matches your preferred Python version and architecture. For Windows 10 on a 64-bit processor, you would choose the Python 3.6.x, ARCH=64 options. Next, select the *ARTIFACTS* tab, and then select the .msi installer file. Executing this file will install the needed dependencies along with the library itself.
+
+When installing on Windows, you have two options. First, you can manually setup the dependencies by installing SWIG and Visual C++ 10.0. After both are installed, you can run `pip install pyscard`.
+
+#
+### Installiation on Linux
+Python and pip usually come pre-installed on Linux systems. However, these systems typically include both Python 2 and Python 3. On older systems, the command `python` will refer to the 2.x version, while `python3` will refer to the 3.x one. The same goes for pip. On some systemd there might be both a `pip` and a `pip3`. You can find out which version you have installed by running `python --version`, and you can see the install location with a `which python` command.
+
+If you need to install python or pip, use the following commands:
+```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.6    or     sudo apt-get install python3.7
+sudo apt-get install python3-pip
+```
+
+Next, install SWIG if it is not already present
+```
+sudo apt-get install swig3.0
+```
+
+Finally, install the pyscard library using pip. The pip installer will also use GCC to build several needed C files.
+```
+sudo pip install pyscard
+```
+
+### Python and Virtual Envrionments
+
+The above instructions will install the *pyscard* library globally on your system, making it avaialble to every Python project on your system. This is not the prefferd method for Python development. Instead, I recommend that you set up a virtual envrionment for each Python project, and then from within the envrionment, install any needed Python dependencies and libraries. By using a virutal envrionment you can pin down a specfici Python and library version. A virtual envrionment also makes your app much easier to deistribute.
+
+The easiset way to get started using Python virtual envrionments is with the *virtualEnvWrapper* extension set. Setting up the extensions is fairly easy, but it does require that you edit your `.bashrc` file on Linux, or your *system path* on Windows. Detailed instructions are available at https://virtualenvwrapper.readthedocs.io/en/latest/install.html
+
+If you get an error when sourcing your updated `.bashrc`, you may need to update an envrionmental variable. First, get the location of your Python install with a `which python`. Then edit `~/.bashrc` and before the other virtualenvwrapper commands, add the following:
+```
+export VIRTUALENVWRAPPER_PYTHON=/path/to/python3
+```
+
+Once the wrapper is installed, you would then use the following commands to setup the envrionment:
+```bash
+# create a new directory for the project
+mkdir -p /path/to/project    # no -p on Windows
+cd /path/to/project
+
+# create and activate the virtual envrionment
+mkvirtualenv -a /path/to/project smartcard
+workon smartcard
+```
+
+Now that the envrionment is active, install any needed dependencies or libraries using `pip`. These libraries will only be installed for the current project
+
+```
+pip install pyscard
+```
+
+#
+### Using pyscard
+The library has some very good documentation available at https://pyscard.sourceforge.io/user-guide.html#introduction. The following code mostly follows the example from their quick start guide.
+
+```python
+# example1
+from smartcard.Exceptions import CardConnectionException, NoCardException
+from smartcard.System import *
+from smartcard import util
+
+
+class MustBeEvenException(Exception):
+    pass
+
+
+if __name__ == '__main__':
+
+    # get and print a list of readers attached to the system
+    sc_readers = readers()
+    print(sc_readers)
+
+    # create a connection to the first reader
+    first_reader = sc_readers[0]
+    connection = first_reader.createConnection()
+
+    # get ready for a command
+    get_uid = util.toBytes("FF CA 00 00 00")
+    alt_get_uid = [0xFF, 0xCA, 0x00, 0x00, 0x00] # alternative to using the helper
+
+    try:
+        # send the command and capture the response data and status
+        connection.connect()
+        data, sw1, sw2 = connection.transmit(get_uid)
+
+        # print the response
+        uid = util.toHexString(data)
+        status = util.toHexString([sw1, sw2])
+        print("UID = {}\tstatus = {}".format(uid, status))
+    except NoCardException:
+        print("ERROR: Card not present")
+
+```
+
+The above code is pretty self-explaniatory and mirros the code that was used in the Java example. One nice thig is that the library already includes several utility functions, so we don't need to make our own. For the command, we use the utility function `toBytes()` which converts a string of hexidecimal paris (optionally seperated by space) into an array. The alternative would be to use a list of integers, e.g. `[0xFF, 0xCA, ...]`
+
+Next, we obtain a list of all of the attached card readers, connect to the first one, and the open a connection to the card. Once the connection is open, we can send commands and receive responses. All responses come in a three-tuple of `(data, sw1, sw2)`, and we use a utility function to pretty print these as a hex string.
+
+One problem with the above workflow is that it assumes the card is present on the reader. But what if we want to wait until a card is activated, then run a command? This type of scenario is where *pyscard* really shines
+
+```python
+# example2
+
+from smartcard.CardRequest import CardRequest
+from smartcard.Exceptions import CardRequestTimeoutException
+from smartcard.CardType import AnyCardType
+from smartcard import util
+
+WAIT_FOR_SECONDS = 5
+
+if __name__ == '__main__':
+    # respond to the insertion of any type of smart card
+    card_type = AnyCardType()
+
+    # create the request. Wait for up to x seconds for a card to be attached
+    request = CardRequest(timeout=WAIT_FOR_SECONDS, cardType=card_type)
+
+    # listen for the card
+    service = None
+    try:
+        service = request.waitforcard()
+    except CardRequestTimeoutException:
+        print("ERROR: No card detected")
+        exit(-1)
+
+    # when a card is attached, open a connection
+    conn = service.connection
+    conn.connect()
+
+    # get and print the ATR and UID of the card
+    get_uid = util.toBytes("FF CA 00 00 00")
+    print("ATR = {}".format(util.toHexString(conn.getATR())))
+    data, sw1, sw2 = conn.transmit(get_uid)
+    uid = util.toHexString(data)
+    status = util.toHexString([sw1, sw2])
+    print("UID = {}\tstatus = {}".format(uid, status))
+ ```
+
+ Here we use the pyscard library to create a wait-loop for detecting the card. In this example we want to respond to any card type, but for most applications you will use the `ATRCardType()` class to specify the type of card to respond to. If the card is attached to the reaer (or is already present) during the timeframe, the program continues. Otherwise an exception is raised and the program halts.
+
+ If we wanted to operate on cards sequentially (to program a batch of cards for instance), we could eaisly attach another event that would execute when a card was removed and restart the wait-loop for the next.
 
 <br/>
 <br/>
