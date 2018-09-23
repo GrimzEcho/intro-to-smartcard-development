@@ -3,7 +3,7 @@ from smartcard.Exceptions import CardRequestTimeoutException
 from smartcard.CardType import AnyCardType
 from smartcard import util
 
-WAIT_FOR_SECONDS = 5
+WAIT_FOR_SECONDS = 30
 
 if __name__ == '__main__':
     # respond to the insertion of any type of smart card
