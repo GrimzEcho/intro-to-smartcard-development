@@ -28,9 +28,7 @@
 
 
 #
-<a href="#heading--introduction"></a>
-Introduction
-------------
+<h1 id="heading--introduction">Introduction</h1>
 
 This guide and the source files for the examples is available at:  
 https://github.com/BrianHVB/intro-to-smartcard-development
@@ -43,9 +41,7 @@ While this guide will discuss several types of cards, it is not specific to any 
 The source code for this guide contains small but working examples of interfacing with smartcards in Python, Java, and Node. The examples *should* be cross-platform, but they were tested only on Windows 10 and Linux (Ubuntu). Mac users may have to mix-and-match the setup from the other two versions.
 
 #
-<a href="#heading--requirements"></a>
-Requirements:
--------------
+<h3 id="heading--requirements">Requirements</h3>
 
 ##### Hardware:
 * A USB smartcard reader
@@ -66,65 +62,62 @@ The choice of software depends on what language you want to develop in, and on w
 Additional requirements will be provided in the individual language-specific section.
 
 #
-<a href="#heading--resources"></a>
-List of Resources
------------------
+<h1 id="heading--resources">List of Resources</h1>
 Here are some of the resources I used frequently:
 
 **ACR 122U**
-* ACS 122U Contactless NRC reader Writer:
+* ACS 122U Contactless NRC reader Writer:  
   https://www.amazon.com/gp/product/B01KEGQFYY/
 
-* ACR122U Drivers and Datasheets:
-    https://www.acs.com.hk/en/driver/3/acr122u-usb-nfc-reader/
+* ACR122U Drivers and Datasheets:  
+  https://www.acs.com.hk/en/driver/3/acr122u-usb-nfc-reader/
 
-*     ACR122U SDK (unofficial - found on GitHub)
-    https://github.com/derekneely/Code-Repo/tree/master/ACR122-SDK
+* ACR122U SDK (unofficial - found on GitHub)  
+  https://github.com/derekneely/Code-Repo/tree/master/ACR122-SDK
 
-*     ACR122U API Manual (good reference for basic ADPU commands and structure)
-    https://www.acs.com.hk/download-manual/419/API-ACR122U-2.04.pdf
+* ACR122U API Manual (good reference for basic APDU commands and structure)  
+  https://www.acs.com.hk/download-manual/419/API-ACR122U-2.04.pdf
 
 **NXP Datasheets**
-*  NTAG 216 Datasheet: The bible for working with the xNT or other NTAG 21x chips
-    https://dangerousthings.com/wp-content/uploads/NTAG213_215_216.pdf
+* NTAG 216 Datasheet: The bible for working with the xNT or other NTAG 21x chips  
+  https://dangerousthings.com/wp-content/uploads/NTAG213_215_216.pdf
 
 **Python**
-*     pySCard - Opensource Python library for interacting with Smart Cards
-   https://pyscard.sourceforge.io/index.html
-    https://pyscard.sourceforge.io/user-guide.html
+* pySCard - Opensource Python library for interacting with Smart Cards  
+  https://pyscard.sourceforge.io/index.html  
+  https://pyscard.sourceforge.io/user-guide.html
 
-* PySCard Binaries/Installers - Useful for getting set up on Windows (Linux can use repositories)
-  https://ci.appveyor.com/project/LudovicRousseau/pyscard
+* PySCard Binaries/Installers - Useful for getting set up on Windows (Linux can use repositories)  
+  https://ci.appveyor.com/project/LudovicRousseau/pyscard  
 
-* virtualenvwrapper - tool to better manage the creation and activation of virtual environments
-  https://virtualenvwrapper.readthedocs.io/en/latest/index.html
+* virtualenvwrapper - tool to better manage the creation and activation of virtual environments  
+  https://virtualenvwrapper.readthedocs.io/en/latest/index.html  
 
-* Click - library for building command line apps in Python
+* Click - library for building command line apps in Python  
   http://click.pocoo.org/5/quickstart/
 
 **Java**
-*  SmartCardIO - First-party Java library for interacting with Smart Cards
-   https://docs.oracle.com/javase/10/docs/api/java.smartcardio-summary.html
+* SmartCardIO - First-party Java library for interacting with Smart Cards  
+  https://docs.oracle.com/javase/10/docs/api/java.smartcardio-summary.html
 
-*    String formatting - Why does Java have to be different
-    https://docs.oracle.com/javase/10/docs/api/java/util/Formatter.html
+* String formatting - Why does Java have to be different  
+  https://docs.oracle.com/javase/10/docs/api/java/util/Formatter.html
 
 **Node**
-* NFC-PCSC - Cross platform Node.js library for interacting with SmartCards
+* NFC-PCSC - Cross platform Node.js library for interacting with SmartCards  
   https://github.com/pokusew/nfc-pcsc
 
 **Misc**
-* SpringCard PC/SC SDK  Excellent set of tools and binary applications for working with NFC and SmartCards (including a script runner and NDEF writer). Lots of examples too.  (Windows only)
-     https://www.springcard.com/en/download/find/file/pcsc-sdk
+* SpringCard PC/SC SDK  Excellent set of tools and binary applications for working with NFC and SmartCards (including a script runner and NDEF writer). Lots of examples too.  (Windows only)  
+  https://www.springcard.com/en/download/find/file/pcsc-sdk
 
-*  Spotify: Trance Playlist
+*  Spotify: Trance Playlist  
       https://open.spotify.com/user/brianhvb/playlist/3I8vna3LV8rUZ791at2b1f?si=_hYSpUFJSDeJRfoPjFU19w
 
 
 #
-<a href="#heading--definitions"></a>
-Definitions:
-------------
+<h1 id="heading--definitions">Definitions</h1>
+
 
 | Term             | Definition                    |
 | --------------- |:-----------------------------:|
@@ -137,7 +130,7 @@ Definitions:
 | IFD | Interface Device; e.g. a card reader
 | NDEF | NFC Data Exchange Format; common data format for storing and transmitting data records
 | PC/SC | Personal Computer/Smart Card; specification for smart-card integration into computing environments
-| ADPU | Application Protocol Data Units; commands to interact with ICCs
+| APDU | Application Protocol Data Units; commands to interact with ICCs
 | T=0 | Communication protocol - byte transmission
 | T=1 | Communication protocol - block transmission
 | CCID | Chip Card Interface Device; protocol for smartcard communication via USB reader
@@ -149,16 +142,13 @@ Definitions:
 
 
 #
-<a href="#heading--general-development"></a>
-General Development
--------------------
+<h1 id="heading--general-development">General Development</h1>
 
 Regardless of which programming language or libraries you choose to use, there is a standard set of commands, responses and procedures for interfacing with smartcards and smartcard readers. These standards come from a number of specifications, including [ECMA-340: Near Field Communication Interface and Protocol (NFCIP-1)](https://www.ecma-international.org/publications/standards/Ecma-340.htm), [ISO 7816: Smart Card Standard](https://en.wikipedia.org/wiki/ISO/IEC_7816), and the various specifications produced by the [PC/SC Working Group](https://www.pcscworkgroup.com/). For a more detailed list of useful specifications, see the standards section at the end of this guide.
 
 #
-<a href="#heading--commands"></a>
-#### Commands:
-Smartcard commands are referred to as ADPUs, and all follow the same basic format. Commands are typically documented using hexadecimal notation, but most of the software libraries allow for them to be entered in other formats as well (decimal, binary, etc). Here is the basic command structure:
+<h3 id="heading--commands">Commands</h3>
+Smartcard commands are referred to as APDUs, and all follow the same basic format. Commands are typically documented using hexadecimal notation, but most of the software libraries allow for them to be entered in other formats as well (decimal, binary, etc). Here is the basic command structure:
 
 | CLA | INS|P1|P2|Data|
 |:----------:|:----------:|:---------:|:---------:|:-----------:|
@@ -176,7 +166,7 @@ Here is an example command that will read the UID/serial number of most smartcar
 
 For this command, the data section is used to send the number by bytes to return. This is a common pattern, and the documentation often refers to this as L(e) for 'length expected'. It is typically the last byte(s) in the data section. To return all bytes of the UID, we send 00. If we knew which card we were targeting, and how long the UID was, we could have specified the number.
 
-While all smartcard commands are supposed to follow this structure, many vendors (especially NXP) often shorten the command documentation to just &nbsp; `CODE | DATA`. Depending on the structure of the library, you may be able to use the command directly, or you might have to convert it to the standard ADPU format.
+While all smartcard commands are supposed to follow this structure, many vendors (especially NXP) often shorten the command documentation to just &nbsp; `CODE | DATA`. Depending on the structure of the library, you may be able to use the command directly, or you might have to convert it to the standard APDU format.
 
 In addition to commands to read/write data from the card, most card readers also have pseudo-APDU commands for interacting with the reader. These commands can be used to set things like LED colors, security features. Generally, these commands are specific to each type/brand of reader. Here is a command to make the ACR122u beep:
 
@@ -185,9 +175,8 @@ In addition to commands to read/write data from the card, most card readers also
 | Beep | FF | 00 | 40 | 00 | 04 01 00 03 03 |
 
 #
-<a href="#heading--responses"></a>
-#### Responses:
-Like commands, responses (also called ADPUs) have a standard format:
+<h3 id="heading--responses">Responses</h3>
+Like commands, responses (also called APDUs) have a standard format:
 
 | DATA | SW1| SW2 |
 |:----------:|:----------:|:---------:|
@@ -204,11 +193,11 @@ The two response codes indicate the success or error of the response. Typically 
 
 
 
-The typical command-response loop for ADPUs involves picking the command from a table, specifying the data and/or length, then checking the response for a `90 00` success.
+The typical command-response loop for APDUs involves picking the command from a table, specifying the data and/or length, then checking the response for a `90 00` success.
 
 #
-<a href="#heading--atr"></a>
-##### Answer to Reset (ATR):
+<h3 id="heading--atr">Answer to Reset (ATR)</h3>
+
 One other commonality worth mentioning is the very first response that a reader gets when powering a smart card. Since smart cards don't hold state when unpowered, every power activation is a form of reset, hence the term. The ATR encodes information about the smart card, specifying everything from the card vendor, to physical characteristics such as transmission rates and electrical timings. Most of this information is used by the firmware on a card reader, but smartcard programmers typically use the ATR to determine the type of the card the reader. A detailed breakdown of the ATR can be found at https://en.wikipedia.org/wiki/Answer_to_reset.
 
 For our purposes, we are really interested in the *historical bytes* section of the ATR. This area is reserved for card manufacturers to include whatever information they believe is necessary for their card. Typically it includes the name of the vendor and card, as well as the amount of writable memory. When programming a smart card application, the first part of the program almost always involves reading the ATR to detect the type of card and then either ignore it or continue.
@@ -251,22 +240,21 @@ Here is a table showing the relevant portions for various NXP NTAG chips:
 | MF0ULH2101 | 03 | 02    | 01 00 | 0E |
 
 #
-<a href="#heading--development-environments"></a>
-Development Environments:
--------------------------
+<h1 id="heading--development-environments">Development Environments:</h1>
+
 Desktop operating systems use the PC/SC specifications for communicating with a reader's firmware. Readers that are PC/SC compliant typically use the default smartcard driver installed in most operating systems. Both Windows and Apple operating systems have a full PC/SC compliant system library, while Linux makes use of a PC/SC Light library. To interface with a reader/smartcard, you need both the generic (or reader specific driver) as well as the PC/SC library.
 
 These two pieces of software enable higher-level smartcard libraries in various languages to be built. There are smartcard libraries available for almost all of the major programming languages, including C/C++, C#, Java, Python, Node, and others. This guide will focus on two of the higher-level languages: Java and Python
 
 
 #
-<a href="#heading--windows"></a>
-### Windows:
+<h2 id="heading--windows">Windows</h2>
+
 On Windows, no setup is needed before the PC/SC libraries and reader can be used. When you connect the reader, Window should recognize it as a *Microsoft Usbccid Smartcard Reader* or something similar. Many readers, including the ACR122u, are equipped with an LED light. Once the reader has successfully communicated with the computer, the light(s) will turn on and indicate that no card is present. The status light will only engage if communication occurs, so the lack of any lights on the ACR122u means that there is an issue either with the driver or with the PC/SC library.
 
 #
-<a href="#heading--linux"></a>
-### Linux (Ubuntu)
+<h2 id="heading--linux">Linux</h2>
+
 There are many versions of Linux. Some have the PC/SC Lite and related packages already installed, others do not. The following instructions should work for any Debian based system, but they have only been tested on Ubuntu 16.04, Ubuntu 18.04, and Mint.
 
 Connect the reader via USB, and look for the presence of a status light indicating that the reader can communicate with the computer (see Windows section above). If the reader lights up, place an NFC tag on it and check if it beeps or changes color. If so, then you have the necessary libraries installed. If not, follow the steps below.
@@ -289,13 +277,11 @@ Other libraries that may be necessary if the above doesn't work(don't install un
 * libccid
 
 
-
-## Java
-<a href="#heading--java"></a>
+<h2 id="heading--java">Java</h2>
 Java has had built-in, first party support for smartcard interaction since Java 1.6. Compared with some of the other libraries, Java's javax.smartcardio is fairly basic, with only a few commonly used classes, and a dozen or so methods. This makes the library easy to learn and use, but at the expense of longer and more verbose applications. There are various third-party libraries that extend smardcardio to specific smart card implementations.
 
 #
-<a href="#heading--java-example-1"></a>
+<h3 id="heading--java-example-1">Example 1</h3>
 Here is a basic program for connecting to a card reader and getting the UID of an attached smartcard:
 
 ```java
@@ -345,6 +331,8 @@ public class Example1 {
 }
 
 ```
+
+<h3 id="heading--java-example-2">Example 2</h3>
 The javax.smartcardio package works at the byte level almost exclusively. However, most smartcard documentation (and programmers!) prefer working with hexadecimal values. Thus, when writing smartcard application in Java, a few helper functions are almost mandatory:
 
 ```java
@@ -426,7 +414,6 @@ public class ConversionHelpers {
 ```
 
 #
-<a href="#heading--java-example-2"></a>
 Using the above helpers, we can now re-write our small example in a more compact and frienldy manner:
 
 ``` java
@@ -451,8 +438,7 @@ public class Example2 {
 }
 ```
 #
-<a href="#heading--java-packaging"></a>
-##### Packaging and Java 9+
+<h2 id="heading--java-packaging">Packaging and Java 9+:</h2>
 
 The above code samples will compile and run normally on Java 1.6 - 1.8, but Java 9 made some big changes to how programs were packaged. One of those changes was dropping and/or moving most of the `javax` libraries (including `javax.smartcardio`) from the standard set of libraries pre-loaded in the JRE.
 
@@ -539,8 +525,8 @@ To run the examples, use the following command while in the *root* directory:
 ```
 
 #
-<a href="#heading--java-linux"></a>
-#### Linux
+<h2 id="heading--java-linux">Java and Linux</h2>
+
 The example source was generated in a Windows environment without issue. However, when running the application on Linux (specifically Ubuntu), the application was not able to discover the reader. The issue is that on some Java versions, the default location (path) that Java searches for the pc/sc library is incorrect. The issue can be resolved by specifying the correct location.
 
 **Locate the correct path**:
@@ -585,8 +571,7 @@ public void setPcscLocation() {
 
 
 #
-<a href="#heading--python"></a>
-## Python
+<h1 id="heading--python">Python</h1>
 
 There are several Python libraries for interacting with smartcard and readers. We will be using *pyscard*, which contains both a higher level API and a low-level API for working directly with the C compiled pc/sc interface. Our focus will be on the higher-level API.
 
@@ -594,10 +579,9 @@ As a library, *pyscard* offers a higher-level interface than Java's *smartcardio
 
 
 #
-<a href="#heading--python"></a>
-### Installiation on Windows
+<h2 id="heading--install-windows">Installing on Windows</h2>
 
-<a href="#heading--install-windows"></a>
+
 #### Installing Python and Pip
 First, make sure that you have both Python 3 and Pip installed. You can test this by running `python --version` and `pip --version` from the command line. This guide was made using Python 3.6 and Pip 10, but any 3.x version should work. If you don't have Python/Pip installed, then the recommended install method is to use the Windows package manager, [Chocolatey](https://chocolatey.org/).
 
@@ -621,8 +605,8 @@ The first and easiest option is to use one of the pre-built binary installers av
 When installing on Windows, you have two options. First, you can manually set up the dependencies by installing SWIG and Visual C++ 10.0. After both are installed, you can run `pip install pyscard`.
 
 #
-<a href="#heading--install-linux"></a>
-### Installation on Linux
+<h2 id="heading--install-linux">Installation on Linux</h2>
+
 Python and pip usually come pre-installed on Linux systems. However, these systems typically include both Python 2 and Python 3. On older systems, the command `python` will refer to the 2.x version, while `python3` will refer to the 3.x one. The same goes for pip. On some systems, there might be both a `pip` and a `pip3`. You can find out which version you have installed by running `python --version`, and you can see the install location with a `which python` command.
 
 If you need to install python or pip, use the following commands:
@@ -644,8 +628,7 @@ sudo pip install pyscard
 ```
 
 # 
-<a href="#heading--virtual-env"></a>
-### Python and Virtual Envrionments
+<h2 id="heading--virtual-env">Python and Virtual Envrionments</h2>
 
 The above instructions will install the *pyscard* library globally on your system, making it available to every Python project on your system. This is not the preferred method for Python development. Instead, I recommend that you set up a virtual environment for each Python project, and then from within the environment, install any needed Python dependencies and libraries. By using a virtual environment you can pin down a specific Python and library version. A virtual environment also makes your app much easier to distribute.
 
@@ -674,10 +657,11 @@ pip install pyscard
 ```
 
 #
-### Using pyscard
+## Using pyscard
 The library has some very good documentation available at https://pyscard.sourceforge.io/user-guide.html#introduction. The following code mostly follows the example from their quick start guide.
 
-<a href="#heading--python-example-1"></a>
+<h3 id="heading--python-example-1">Example 1</h3>
+
 ```python
 # example1
 from smartcard.Exceptions import CardConnectionException, NoCardException
@@ -722,7 +706,8 @@ The above code is pretty self-explanatory and mirrors the code that was used in 
 Next, we obtain a list of all of the attached card readers, connect to the first one, and the open a connection to the card. Once the connection is open, we can send commands and receive responses. All responses come in a three-tuple of `(data, sw1, sw2)`, and we use a utility function to pretty print these as a hex string.
 
 #
-<a href="#heading--python-example-2"></a>
+<h2 id="heading--python-example-2">Example 2</h2>
+
 One problem with the above workflow is that it assumes the card is present on the reader. But what if we want to wait until a card is activated, then run a command? This type of scenario is where *pyscard* really shines
 
 ```python
@@ -770,8 +755,8 @@ if __name__ == '__main__':
 
 
 #
-<a href="#heading--standards"></a>
-## Standards and Specifications:
+<h1 id="heading--standards">Standards and Specifications</h1>
+
 The following is a list and description of various standards that smart cards, smart card readers, smartcard communications protocols are based on. Many of the ISO standards are not free, and are quite expensive to legitimately purchase. Most of the other standards are available at no cost
 
 #
