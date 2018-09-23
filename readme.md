@@ -132,6 +132,7 @@ Smartcard commands are refered to as ADPUs, and all follow the same basic format
 
 #
 Here is an example command that will read the UID/serial number of most smartcards:
+
 | NAME | CLA | INS | P1 | P2 | Data |
 |:---------:|:----------:|:----------:|:---------:|:---------:|:-----------:|
 | Get Data | FF | CA | 00 | 00 | 00 |
