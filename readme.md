@@ -122,7 +122,8 @@ General Development
 
 Regardless of which programming langague or libaries you choose to use, there is a standard set of commands, responses and procedures for interfacing with smartcards and smartcard readers. These standards come from a number of specifications, including [ECMA-340: Near Field Communication Interface and Protocol (NFCIP-1)](https://www.ecma-international.org/publications/standards/Ecma-340.htm), [ISO 7816: Smart Card Standard](https://en.wikipedia.org/wiki/ISO/IEC_7816), and the various specifications produced by the [PC/SC Working Group](https://www.pcscworkgroup.com/). For a more detailes list of useful specifications, see the standards section at the end of this guide.
 
-###### Commands:
+#
+##### Commands:
 Smartcard commands are refered to as ADPUs, and all follow the same basic format. Commands are typically documented using hexidecimal notation, but most of the software libraries allow for them to be entered in other formats as well (decimal, binary, etc). Here is the basic command structure:
 
 | CLA | INS|P1|P2|Data|
@@ -147,7 +148,8 @@ In addition to commands to read/write data from the card, most card readers also
 |:---------:|:----------:|:----------:|:---------:|:---------:|:-----------:|
 | Beep | FF | 00 | 40 | 00 | 04 01 00 03 03 |
 
-###### Responses:
+#
+##### Responses:
 Like commands, responses (also called ADPUs) have a standard format:
 
 | DATA | SW1| SW2 |
