@@ -132,7 +132,7 @@ Smartcard commands are refered to as ADPUs, and all follow the same basic format
 
 #
 Here is an example command that will read the UID/serial number of most smartcards:
-| NAME |CLA | INS|P1|P2|Data|
+| NAME | CLA | INS | P1 | P2 | Data |
 |:---------:|:----------:|:----------:|:---------:|:---------:|:-----------:|
 | Get Data | FF | CA | 00 | 00 | 00 |
 
@@ -379,7 +379,7 @@ public class Example2 {
 ```
 #
 
-###### Packaging and Java 9+
+##### Packaging and Java 9+
 
 The above code samples will copmile and run normally on Java 1.6 - 1.8, but Java 9 made some big changes to how programs were packaged. One of those changes was dropping and/or moving most of the `javax` libraries (including `javax.smartcardio`) from the standard set of libaries pre-loaded in the JRE.
 
