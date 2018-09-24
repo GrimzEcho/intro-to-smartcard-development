@@ -379,7 +379,7 @@ public class ConversionHelpers {
      * @return a byte array
      */
     public static byte[] hexToBytes(String hex) {
-        String condensed = hex.replaceAll("\\D", "");
+        String condensed = hex.replaceAll("[^\\da-fA-F]", "");
         return parseHexBinary(condensed);
     }
 
