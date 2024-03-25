@@ -259,7 +259,7 @@ There are many versions of Linux. Some have the PC/SC Lite and related packages 
 
 Connect the reader via USB, and look for the presence of a status light indicating that the reader can communicate with the computer (see Windows section above). If the reader lights up, place an NFC tag on it and check if it beeps or changes color. If so, then you have the necessary libraries installed. If not, follow the steps below.
 
-Install the following packages using `apt install <paclage>`:
+Install the following packages using `apt install <package>`:
 
 * libusb-dev (USB development)
 * pcscd (PC/SC daemon)
@@ -272,7 +272,7 @@ To test if the PC/SC lite interface is working run `pcsc_scan` and look in the o
 
 On some systems you may have to manually start the PC/SC daemon with `sudo service pcscd start`, on others, the service will automatically be started when the reader is accessed.
 
-Other libraries that may be necessary if the above doesn't work(don't install unless you need to):
+Other libraries that may be necessary if the above doesn't work (don't install unless you need to):
 * libusb++
 * libccid
 
@@ -414,7 +414,7 @@ public class ConversionHelpers {
 ```
 
 #
-Using the above helpers, we can now re-write our small example in a more compact and frienldy manner:
+Using the above helpers, we can now re-write our small example in a more compact and friendly manner:
 
 ``` java
 package examples;
